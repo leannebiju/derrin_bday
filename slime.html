@@ -9,20 +9,23 @@
         * {
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
+            touch-action: none; /* Disables default browser pan/zoom gestures completely for buttery-smooth interaction */
         }
         body {
             background-color: #8b3fd9;
             font-family: 'Fredoka', sans-serif;
             margin: 0;
-            padding: 10px;
+            padding: env(safe-area-inset-top, 8px) 8px env(safe-area-inset-bottom, 8px) 8px;
             text-align: center;
             color: #ffffff;
-            min-height: 100vh;
+            height: 100vh;
+            height: 100dvh; /* Mobile viewport fix for address bar shifts */
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             overflow: hidden;
-            position: relative;
+            position: fixed; /* Prevents mobile rubber-band scrolling */
+            width: 100%;
         }
         .container {
             max-width: 420px;
@@ -30,29 +33,30 @@
             width: 100%;
             display: flex;
             flex-direction: column;
-            height: 100vh;
+            height: 100%;
             z-index: 10;
         }
         h1 {
-            font-size: 1.5rem;
-            margin: 5px 0 2px 0;
+            font-size: 1.3rem;
+            margin: 4px 0 2px 0;
             color: #f2f4f5;
         }
         .subtitle {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: #f9f9f9;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
         .canvas-box {
             flex: 1;
             background: #1e293b;
-            border-radius: 20px;
+            border-radius: 16px;
             position: relative;
             overflow: hidden;
             border: 3px solid #334155;
-            touch-action: none;
+            box-shadow: inset 0 4px 12px rgba(0,0,0,0.4);
+            min-height: 0; /* Flexbox overflow fix */
         }
         canvas {
             display: block;
@@ -62,30 +66,32 @@
         .controls {
             display: flex;
             justify-content: center;
-            gap: 8px;
-            margin: 10px 0;
+            gap: 12px;
+            margin: 8px 0;
         }
         .color-btn {
-            width: 36px;
-            height: 36px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             border: 2px solid #ffffff;
             cursor: pointer;
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            transition: transform 0.1s;
         }
-        .color-btn:active { transform: scale(0.9); }
+        .color-btn:active { transform: scale(0.85); }
         .back-btn {
             background: #334155;
             color: #ffffff;
             border: none;
-            padding: 10px 20px;
-            border-radius: 20px;
+            padding: 8px 16px;
+            border-radius: 16px;
             font-family: 'Fredoka', sans-serif;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             cursor: pointer;
             text-decoration: none;
             display: inline-block;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
     </style>
 </head>
@@ -115,9 +121,12 @@
         const canvas = document.getElementById('slimeCanvas');
         const ctx = canvas.getContext('2d');
         
+        // High-DPI (Retina) display optimization for crisp graphics on mobile screens
         function resize() {
-            canvas.width = canvas.parentElement.clientWidth;
-            canvas.height = canvas.parentElement.clientHeight;
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = canvas.parentElement.clientWidth * dpr;
+            canvas.height = canvas.parentElement.clientHeight * dpr;
+            ctx.scale(dpr, dpr);
         }
         window.addEventListener('resize', resize);
         resize();
@@ -127,39 +136,67 @@
             slimeColor = color;
         }
 
+        // Reduced blob count slightly for locked 60fps performance on lower-end mobile CPUs
         let blobs = [];
-        for(let i=0; i<15; i++) {
-            blobs.push({
-                x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height,
-                vx: (Math.random() - 0.5) * 2,
-                vy: (Math.random() - 0.5) * 2,
-                radius: Math.random() * 40 + 30
-            });
-        }
+        const logicalWidth = () => canvas.width / (window.devicePixelRatio || 1);
+        const logicalHeight = () => canvas.height / (window.devicePixelRatio || 1);
 
-        let targetX = canvas.width / 2;
-        let targetY = canvas.height / 2;
+        function initBlobs() {
+            blobs = [];
+            for(let i=0; i<12; i++) {
+                blobs.push({
+                    x: Math.random() * logicalWidth(),
+                    y: Math.random() * logicalHeight(),
+                    vx: (Math.random() - 0.5) * 1.5,
+                    vy: (Math.random() - 0.5) * 1.5,
+                    radius: Math.random() * 35 + 25
+                });
+            }
+        }
+        initBlobs();
+
+        let targetX = logicalWidth() / 2;
+        let targetY = logicalHeight() / 2;
         let isInteracting = false;
 
-        function handlePointer(e) {
+        // Unified Pointer Events handle Mouse, Touch, and Multi-touch naturally
+        function handlePointerMove(e) {
             const rect = canvas.getBoundingClientRect();
-            targetX = (e.clientX || e.touches[0].clientX) - rect.left;
-            targetY = (e.clientY || e.touches[0].clientY) - rect.top;
+            targetX = e.clientX - rect.left;
+            targetY = e.clientY - rect.top;
             isInteracting = true;
         }
 
-        canvas.addEventListener('mousemove', handlePointer);
-        canvas.addEventListener('touchmove', (e) => { e.preventDefault(); handlePointer(e); }, {passive: false});
-        canvas.addEventListener('touchstart', (e) => { handlePointer(e); });
-        canvas.addEventListener('touchend', () => { isInteracting = false; });
-        canvas.addEventListener('mouseup', () => { isInteracting = false; });
+        canvas.addEventListener('pointerdown', (e) => {
+            canvas.setPointerCapture(e.pointerId);
+            handlePointerMove(e);
+        });
+
+        canvas.addEventListener('pointermove', (e) => {
+            if (isInteracting) {
+                handlePointerMove(e);
+            }
+        });
+
+        canvas.addEventListener('pointerup', (e) => {
+            isInteracting = false;
+            try { canvas.releasePointerCapture(e.pointerId); } catch(err) {}
+        });
+
+        canvas.addEventListener('pointercancel', () => {
+            isInteracting = false;
+        });
 
         function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const w = logicalWidth();
+            const h = logicalHeight();
+
+            ctx.clearRect(0, 0, w, h);
 
             ctx.fillStyle = slimeColor;
-            ctx.shadowBlur = 20;
+            
+            // Note: Heavy shadowBlur can tank mobile GPU performance, kept optimized
+            ctx.shadowBlur = 12;
             ctx.shadowColor = slimeColor;
 
             blobs.forEach(b => {
@@ -167,16 +204,16 @@
                     let dx = targetX - b.x;
                     let dy = targetY - b.y;
                     let dist = Math.sqrt(dx*dx + dy*dy);
-                    if (dist < 150) {
-                        b.x += dx * 0.08;
-                        b.y += dy * 0.08;
+                    if (dist < 180) {
+                        b.x += dx * 0.1;
+                        b.y += dy * 0.1;
                     }
                 }
                 b.x += b.vx;
                 b.y += b.vy;
 
-                if (b.x < 0 || b.x > canvas.width) b.vx *= -1;
-                if (b.y < 0 || b.y > canvas.height) b.vy *= -1;
+                if (b.x < 20 || b.x > w - 20) b.vx *= -1;
+                if (b.y < 20 || b.y > h - 20) b.vy *= -1;
 
                 ctx.beginPath();
                 ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
@@ -185,7 +222,7 @@
 
             // Draw central gooey core pulled towards touch
             ctx.beginPath();
-            ctx.arc(targetX, targetY, isInteracting ? 55 : 0, 0, Math.PI * 2);
+            ctx.arc(targetX, targetY, isInteracting ? 50 : 0, 0, Math.PI * 2);
             ctx.fill();
 
             ctx.shadowBlur = 0;
