@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Derrin's 10th Birthday!</title>
+    <title>Happy 10th Birthday! 🎂✨</title>
     <style>
         * {
             box-sizing: border-box;
@@ -192,7 +192,7 @@
         }
         #mic-status {
             font-family: 'Segoe UI', sans-serif;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: #ffffff;
             margin-top: 12px;
             min-height: 20px;
@@ -242,7 +242,7 @@
 <body>
 
     <div class="container">
-        <h1>Double Digits</h1>
+        <h1>✨ Double Digits ✨</h1>
         <div class="subtitle">Official 10th Birthday Countdown</div>
 
         <div class="countdown-box" id="countdown-box">
@@ -285,18 +285,18 @@
         </div>
 
         <div class="controls" id="controls-section">
-            <button id="mic-btn" onclick="initMic()">Start Blowing</button>
-            <div id="mic-status">Tap the button, then blow into your mic or tap any flame</div>
+            <button id="mic-btn" onclick="initMic()">✨ Enable Blowing</button>
+            <div id="mic-status">Tap the button, or tap any flame to extinguish!</div>
         </div>
 
         <div id="wish-card">
-            <h2>Happy 10th Birthday Derrin!</h2>
-            <p>Welcome to the double digits club! May your year ahead be bright, filled with cozy crochet projects, unicorns, puppies and endless happiness. You are the cutest cousin ever!</p>
+            <h2>Happy 10th Birthday! 🤍</h2>
+            <p>Welcome to double digits! May your year ahead be wonderfully bright, filled with your favorite pastel shades, cozy crochet projects, and endless happiness. You are the absolute best cousin ever!</p>
         </div>
     </div>
 
     <div class="footer">
-        Made with love just for you 🤍
+        Made with love just for you
     </div>
 
     <script>
@@ -362,7 +362,7 @@
             navigator.mediaDevices.getUserMedia({ audio: true, video: false })
                 .then(stream => {
                     btn.style.display = 'none';
-                    status.innerText = "Mic active! Blow gently into your phone mic ✨";
+                    status.innerText = "Mic active! Blow directly into the bottom mic ✨";
 
                     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
                     const microphone = audioContext.createMediaStreamSource(stream);
@@ -374,13 +374,15 @@
 
                     function detectBlow() {
                         analyser.getByteFrequencyData(dataArray);
-                        let sum = 0;
-                        for (let i = 0; i < dataArray.length; i++) {
-                            sum += dataArray[i];
+                        
+                        let lowSum = 0;
+                        const lowBins = 15;
+                        for (let i = 0; i < lowBins; i++) {
+                            lowSum += dataArray[i];
                         }
-                        let average = sum / dataArray.length;
+                        let lowAverage = lowSum / lowBins;
 
-                        if (average > 100 && !isBlowLocked && !isAnimating) {
+                        if (lowAverage > 25 && !isBlowLocked && !isAnimating) {
                             isBlowLocked = true;
                             triggerRightToLeftSequence();
                         }
