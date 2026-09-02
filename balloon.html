@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Balloon Bash 🎈</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            background-color: #8b3fd9;
+            font-family: 'Fredoka', 'Segoe UI', sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+            position: relative;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            width: 100%;
+            z-index: 10;
+            position: relative;
+        }
+        h1 {
+            color: #ffffff;
+            font-size: 2rem;
+            margin-bottom: 5px;
+            font-weight: 600;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        .subtitle {
+            font-size: 0.85rem;
+            color: #f3e8ff;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+        }
+        .game-hud {
+            display: flex;
+            justify-content: space-around;
+            background: #ffffff;
+            padding: 12px;
+            border-radius: 20px;
+            color: #581c87;
+            font-weight: 600;
+            font-size: 1.1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            margin-bottom: 20px;
+            border: 2px solid #f3e8ff;
+        }
+        .game-area {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+            pointer-events: none;
+        }
+        .floating-balloon {
+            position: absolute;
+            font-size: 3.2rem;
+            cursor: pointer;
+            pointer-events: auto;
+            animation: floatUp linear forwards;
+            user-select: none;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15));
+        }
+        @keyframes floatUp {
+            0% {
+                transform: translateY(105vh) scale(1);
+            }
+            100% {
+                transform: translateY(-10vh) scale(1);
+            }
+        }
+        .popup-card {
+            display: none;
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 24px;
+            color: #374151;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            border: 2px solid #f3e8ff;
+            margin-top: 40px;
+        }
+        .popup-card h2 {
+            color: #6b21a8;
+            margin-top: 0;
+            font-size: 1.5rem;
+        }
+        .start-btn, .back-btn {
+            background: #ffffff;
+            color: #581c87;
+            border: none;
+            padding: 14px 32px;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1rem;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 15px;
+        }
+        .start-btn:active, .back-btn:active {
+            transform: scale(0.96);
+        }
+        .footer {
+            font-size: 0.8rem;
+            color: #f3e8ff;
+            margin-top: 20px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-weight: 600;
+            z-index: 10;
+            position: relative;
+        }
+        .confetti {
+            position: fixed;
+            width: 8px;
+            height: 16px;
+            background-color: #facc15;
+            top: -20px;
+            opacity: 0.9;
+            animation: fall linear forwards;
+            z-index: 9999;
+            pointer-events: none;
+        }
+        @keyframes fall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(105vh) rotate(720deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-area" id="game-area"></div>
+
+    <div class="container">
+        <h1>🎈 Balloon Bash</h1>
+        <div class="subtitle">Pop as many as you can!</div>
+
+        <div class="game-hud" id="hud" style="display: none;">
+            <div>Score: <span id="score">0</span></div>
+            <div>Time: <span id="timer">30</span>s</div>
+        </div>
+
+        <div class="popup-card" id="start-card" style="display: block;">
+            <h2>Ready to Pop?</h2>
+            <p style="font-size: 0.9rem; color: #6b7280;">Tap the floating balloons before time runs out!</p>
+            <button class="start-btn" onclick="startGame()" style="background: #fde047; color: #581c87;">Start Game!</button>
+            <br>
+            <a href="arcade.html" class="back-btn" style="background: #f3e8ff; font-size: 0.9rem; padding: 10px 20px;">← Back to Arcade</a>
+        </div>
+
+        <div class="popup-card" id="end-card">
+            <h2>Time's Up!</h2>
+            <p id="final-score-text" style="font-size: 1.15rem; font-weight: 600; color: #6b21a8;">You popped 0 balloons!</p>
+            <button class="start-btn" onclick="startGame()" style="background: #fde047; color: #581c87;">Play Again</button>
+            <br>
+            <a href="arcade.html" class="back-btn" style="background: #f3e8ff; font-size: 0.9rem; padding: 10px 20px;">← Back to Arcade Menu</a>
+        </div>
+    </div>
+
+    <div class="footer">Made with love just for you 🤍</div>
+
+    <script>
+        let score = 0;
+        let timeLeft = 30;
+        let gameInterval = null;
+        let balloonTimer = null;
+        let isPlaying = false;
+
+        function startGame() {
+            score = 0;
+            timeLeft = 30;
+            document.getElementById('score').innerText = score;
+            document.getElementById('timer').innerText = timeLeft;
+            document.getElementById('start-card').style.display = 'none';
+            document.getElementById('end-card').style.display = 'none';
+            document.getElementById('hud').style.display = 'flex';
+            document.getElementById('game-area').innerHTML = '';
+            isPlaying = true;
+
+            gameInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById('timer').innerText = timeLeft;
+                if (timeLeft <= 0) {
+                    endGame();
+                }
+            }, 1000);
+
+            balloonTimer = setInterval(spawnBalloon, 550);
+        }
+
+        function spawnBalloon() {
+            if (!isPlaying) return;
+
+            const gameArea = document.getElementById('game-area');
+            const balloon = document.createElement('div');
+            balloon.classList.add('floating-balloon');
+            
+            const emojis = ['🎈', '🩷', '💙', '🎈', '💛', '💜', '🎈'];
+            balloon.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+
+            
+            const randomX = Math.random() * (window.innerWidth - 60);
+            balloon.style.left = randomX + 'px';
+
+            const randomDuration = Math.random() * 2 + 2.5;
+            balloon.style.animationDuration = randomDuration + 's';
+
+            balloon.addEventListener('pointerdown', (e) => {
+                e.stopPropagation();
+                if (!isPlaying) return;
+                score++;
+                document.getElementById('score').innerText = score;
+                
+                balloon.style.transform = 'scale(1.4)';
+                balloon.style.opacity = '0';
+                setTimeout(() => balloon.remove(), 100);
+            });
+
+            balloon.addEventListener('animationend', () => {
+                balloon.remove();
+            });
+
+            gameArea.appendChild(balloon);
+        }
+
+        function endGame() {
+            isPlaying = false;
+            clearInterval(gameInterval);
+            clearInterval(balloonTimer);
+
+            document.getElementById('game-area').innerHTML = '';
+            document.getElementById('hud').style.display = 'none';
+
+            document.getElementById('final-score-text').innerText = `You popped ${score} balloons! Awesome job! 🏆`;
+            document.getElementById('end-card').style.display = 'block';
+            triggerConfetti();
+        }
+
+        function triggerConfetti() {
+            const colors = ['#f43f5e', '#8b5cf6', '#3b82f6', '#10b981', '#facc15', '#ec4899'];
+            for (let i = 0; i < 80; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                confetti.style.left = Math.random() * window.innerWidth + 'px';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDuration = (Math.random() * 2 + 1.5) + 's';
+                confetti.style.width = (Math.random() * 6 + 6) + 'px';
+                confetti.style.height = (Math.random() * 10 + 10) + 'px';
+                document.body.appendChild(confetti);
+
+                setTimeout(() => { confetti.remove(); }, 3500);
+            }
+        }
+    </script>
+</body>
+</html>
