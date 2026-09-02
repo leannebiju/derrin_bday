@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Derrin's Birthday Arcade</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            background-color: #8b3fd9;
+            font-family: 'Fredoka', 'Segoe UI', sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        h1 {
+            color: #ffffff;
+            font-size: 2.2rem;
+            margin-bottom: 5px;
+            font-weight: 600;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        .subtitle {
+            font-size: 0.9rem;
+            color: #f3e8ff;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+        }
+        .game-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .game-btn {
+            background: #ffffff;
+            color: #581c87;
+            border: none;
+            padding: 18px 20px;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            font-weight: 600;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            transition: transform 0.1s;
+            border: 2px solid #f3e8ff;
+        }
+        .game-btn:active {
+            transform: scale(0.96);
+        }
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            border: 2px solid #ffffff;
+            padding: 12px 28px;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 0.95rem;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .footer {
+            font-size: 0.8rem;
+            color: #f3e8ff;
+            margin-top: 20px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Birthday Arcade</h1>
+        <div class="subtitle">Choose a Game to Play!</div>
+
+        <div class="game-menu">
+            <a href="memory.html" class="game-btn">
+                <span>🧩</span> Birthday Memory Match
+            </a>
+            <a href="balloon.html" class="game-btn">
+                <span>🎈</span> Balloon Bash
+            </a>
+            <a href="slime.html" class="game-btn">
+                <span>🎉</span> Slime
+            </a>
+            <a href="photobooth.html" class="game-btn">
+                <span>📷</span> Derrin's Birthday Photobooth
+            </a>
+        </div>
+
+        <a href="index.html" class="back-btn">← Back to Birthday Cake</a>
+    </div>
+
+    <div class="footer">Made with love just for you 🤍</div>
+
+</body>
+</html>
