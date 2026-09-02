@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Satisfying Slime</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            background-color: #8b3fd9;
+            font-family: 'Fredoka', sans-serif;
+            margin: 0;
+            padding: 10px;
+            text-align: center;
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+            position: relative;
+        }
+        .container {
+            max-width: 420px;
+            margin: 0 auto;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            z-index: 10;
+        }
+        h1 {
+            font-size: 1.5rem;
+            margin: 5px 0 2px 0;
+            color: #f2f4f5;
+        }
+        .subtitle {
+            font-size: 0.75rem;
+            color: #f9f9f9;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .canvas-box {
+            flex: 1;
+            background: #1e293b;
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+            border: 3px solid #334155;
+            touch-action: none;
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 10px 0;
+        }
+        .color-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 2px solid #ffffff;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .color-btn:active { transform: scale(0.9); }
+        .back-btn {
+            background: #334155;
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 0.85rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Slime Simulator</h1>
+        <div class="subtitle">Drag or tap to squish and stretch!</div>
+
+        <div class="canvas-box">
+            <canvas id="slimeCanvas"></canvas>
+        </div>
+
+        <div class="controls">
+            <div class="color-btn" style="background: #ec4899;" onclick="setSlimeColor('#ec4899')"></div>
+            <div class="color-btn" style="background: #8b5cf6;" onclick="setSlimeColor('#8b5cf6')"></div>
+            <div class="color-btn" style="background: #3b82f6;" onclick="setSlimeColor('#3b82f6')"></div>
+            <div class="color-btn" style="background: #10b981;" onclick="setSlimeColor('#10b981')"></div>
+            <div class="color-btn" style="background: #facc15;" onclick="setSlimeColor('#facc15')"></div>
+        </div>
+
+        <div>
+            <a href="arcade.html" class="back-btn">← Back to Arcade</a>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('slimeCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        function resize() {
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        let slimeColor = '#ec4899';
+        function setSlimeColor(color) {
+            slimeColor = color;
+        }
+
+        let blobs = [];
+        for(let i=0; i<15; i++) {
+            blobs.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                vx: (Math.random() - 0.5) * 2,
+                vy: (Math.random() - 0.5) * 2,
+                radius: Math.random() * 40 + 30
+            });
+        }
+
+        let targetX = canvas.width / 2;
+        let targetY = canvas.height / 2;
+        let isInteracting = false;
+
+        function handlePointer(e) {
+            const rect = canvas.getBoundingClientRect();
+            targetX = (e.clientX || e.touches[0].clientX) - rect.left;
+            targetY = (e.clientY || e.touches[0].clientY) - rect.top;
+            isInteracting = true;
+        }
+
+        canvas.addEventListener('mousemove', handlePointer);
+        canvas.addEventListener('touchmove', (e) => { e.preventDefault(); handlePointer(e); }, {passive: false});
+        canvas.addEventListener('touchstart', (e) => { handlePointer(e); });
+        canvas.addEventListener('touchend', () => { isInteracting = false; });
+        canvas.addEventListener('mouseup', () => { isInteracting = false; });
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = slimeColor;
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = slimeColor;
+
+            blobs.forEach(b => {
+                if (isInteracting) {
+                    let dx = targetX - b.x;
+                    let dy = targetY - b.y;
+                    let dist = Math.sqrt(dx*dx + dy*dy);
+                    if (dist < 150) {
+                        b.x += dx * 0.08;
+                        b.y += dy * 0.08;
+                    }
+                }
+                b.x += b.vx;
+                b.y += b.vy;
+
+                if (b.x < 0 || b.x > canvas.width) b.vx *= -1;
+                if (b.y < 0 || b.y > canvas.height) b.vy *= -1;
+
+                ctx.beginPath();
+                ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+                ctx.fill();
+            });
+
+            // Draw central gooey core pulled towards touch
+            ctx.beginPath();
+            ctx.arc(targetX, targetY, isInteracting ? 55 : 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.shadowBlur = 0;
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+</body>
+</html>
