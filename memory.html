@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Birthday Memory Match 🧩</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            background-color: #8b3fd9;
+            font-family: 'Fredoka', 'Segoe UI', sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow-x: hidden;
+            position: relative;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            width: 100%;
+            z-index: 2;
+            position: relative;
+        }
+        h1 {
+            color: #ffffff;
+            font-size: 2rem;
+            margin-bottom: 5px;
+            font-weight: 600;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        .subtitle {
+            font-size: 0.85rem;
+            color: #f3e8ff;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+        }
+        .game-card {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 24px;
+            color: #374151;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+            border: 2px solid #f3e8ff;
+        }
+        .game-card h3 {
+            color: #6b21a8;
+            margin-top: 0;
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+        }
+        .stats {
+            font-size: 0.9rem;
+            color: #6b7280;
+            margin-bottom: 15px;
+        }
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+        .card {
+            aspect-ratio: 1;
+            background: #f3e8ff;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            transition: transform 0.2s, background-color 0.2s;
+            user-select: none;
+        }
+        .card.flipped {
+            background: #ffffff;
+            transform: scale(0.98);
+        }
+        .card.matched {
+            background: #e9d5ff;
+            opacity: 0.7;
+            pointer-events: none;
+        }
+        .back-btn {
+            background: #ffffff;
+            color: #581c87;
+            border: none;
+            padding: 14px 32px;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1rem;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        .back-btn:active {
+            transform: scale(0.96);
+        }
+        .footer {
+            font-size: 0.8rem;
+            color: #f3e8ff;
+            margin-top: 20px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-weight: 600;
+            z-index: 2;
+            position: relative;
+        }
+        .confetti {
+            position: fixed;
+            width: 8px;
+            height: 16px;
+            background-color: #facc15;
+            top: -20px;
+            opacity: 0.9;
+            animation: fall linear forwards;
+            z-index: 9999;
+            pointer-events: none;
+        }
+        @keyframes fall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(105vh) rotate(720deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>🧩 Memory Match</h1>
+        <div class="subtitle">Find All the Pairs</div>
+
+        <div class="game-card">
+            <h3>Birthday Pairs</h3>
+            <div class="stats" id="stats">Moves: 0 | Matches: 0 / 8</div>
+            <div class="memory-grid" id="memory-grid"></div>
+            <p id="game-msg" style="font-size: 0.85rem; color: #6b7280; margin-top: 15px;">Flip cards to find matching pairs!</p>
+        </div>
+
+        <a href="arcade.html" class="back-btn">← Back to Arcade Menu</a>
+    </div>
+
+    <div class="footer">Made with love just for you 🤍</div>
+
+    <script>
+        const icons = ['🎂', '🎈', '⭐', '🧁', '🎁', '👑', '🐶', '🦄'];
+        let cardsArray = [...icons, ...icons];
+        let grid = document.getElementById('memory-grid');
+        let flippedCards = [];
+        let matchedPairs = 0;
+        let moves = 0;
+        let isLocked = false;
+
+        cardsArray.sort(() => 0.5 - Math.random());
+
+        function createBoard() {
+            grid.innerHTML = '';
+            cardsArray.forEach((icon, index) => {
+                const card = document.createElement('button');
+                card.classList.add('card');
+                card.dataset.icon = icon;
+                card.dataset.index = index;
+                card.innerText = '❓';
+                card.addEventListener('click', flipCard);
+                grid.appendChild(card);
+            });
+        }
+
+        function flipCard() {
+            if (isLocked) return;
+            const clickedCard = this;
+            if (clickedCard.classList.contains('flipped') || clickedCard.classList.contains('matched')) return;
+
+            clickedCard.classList.add('flipped');
+            clickedCard.innerText = clickedCard.dataset.icon;
+            flippedCards.push(clickedCard);
+
+            if (flippedCards.length === 2) {
+                moves++;
+                checkMatch();
+            }
+        }
+
+        function checkMatch() {
+            const [card1, card2] = flippedCards;
+            const isMatch = card1.dataset.icon === card2.dataset.icon;
+
+            if (isMatch) {
+                card1.classList.add('matched');
+                card2.classList.add('matched');
+                matchedPairs++;
+                updateStats();
+                resetTurn();
+
+                if (matchedPairs === icons.length) {
+                    document.getElementById('game-msg').innerText = `🏆 You won in ${moves} moves! Amazing job!`;
+                    triggerConfetti();
+                }
+            } else {
+                isLocked = true;
+                setTimeout(() => {
+                    card1.classList.remove('flipped');
+                    card1.innerText = '❓';
+                    card2.classList.remove('flipped');
+                    card2.innerText = '❓';
+                    resetTurn();
+                }, 900);
+            }
+            updateStats();
+        }
+
+        function resetTurn() {
+            flippedCards = [];
+            isLocked = false;
+        }
+
+        function updateStats() {
+            document.getElementById('stats').innerText = `Moves: ${moves} | Matches: ${matchedPairs} / 8`;
+        }
+
+        function triggerConfetti() {
+            const colors = ['#f43f5e', '#8b5cf6', '#3b82f6', '#10b981', '#facc15', '#ec4899'];
+            for (let i = 0; i < 75; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                confetti.style.left = Math.random() * window.innerWidth + 'px';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDuration = (Math.random() * 2 + 1.5) + 's';
+                confetti.style.width = (Math.random() * 6 + 6) + 'px';
+                confetti.style.height = (Math.random() * 10 + 10) + 'px';
+                document.body.appendChild(confetti);
+
+                setTimeout(() => { confetti.remove(); }, 3500);
+            }
+        }
+
+        createBoard();
+    </script>
+</body>
+</html>
