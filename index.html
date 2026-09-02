@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Derrin's 10th Birthday!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
     <style>
         * {
             box-sizing: border-box;
@@ -11,7 +12,7 @@
         }
         body {
             background-color: #8b3fd9;
-            font-family: 'Playfair Display', 'Segoe UI', serif;
+            font-family: 'Fredoka', 'Segoe UI', sans-serif;
             text-align: center;
             margin: 0;
             padding: 20px;
@@ -29,15 +30,13 @@
         }
         h1 {
             color: #ffffff;
-            font-family: 'Playfair Display', serif;
             font-size: 2.2rem;
             margin-bottom: 4px;
-            font-weight: 700;
+            font-weight: 600;
             letter-spacing: 0.5px;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
         .subtitle {
-            font-family: 'Segoe UI', sans-serif;
             font-size: 0.9rem;
             color: #f3e8ff;
             margin-bottom: 20px;
@@ -45,7 +44,6 @@
             text-transform: uppercase;
             letter-spacing: 2px;
         }
-        /* Countdown Box */
         .countdown-box {
             background: #ffffff;
             padding: 16px;
@@ -55,14 +53,12 @@
             border: 2px solid #f3e8ff;
         }
         .timer-display {
-            font-family: 'Segoe UI', sans-serif;
             font-size: 1.4rem;
-            font-weight: 700;
+            font-weight: 600;
             color: #581c87;
             margin-top: 6px;
             letter-spacing: 1px;
         }
-        /* Cake Styling */
         .cake-wrapper {
             position: relative;
             margin: 40px auto 25px auto;
@@ -104,172 +100,95 @@
         }
         .drippy-icing {
             position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            height: 38px;
+            top: -2px; left: -2px; right: -2px; height: 38px;
             background: #ffffff;
             border-radius: 16px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             clip-path: path('M 0 0 L 250 0 L 250 16 Q 240 36 225 24 Q 210 12 195 28 Q 180 38 165 22 Q 150 10 135 30 Q 120 40 105 24 Q 90 12 75 28 Q 60 36 45 22 Q 30 10 15 26 Q 8 34 0 20 Z');
         }
         .drippy-icing-top {
             position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            height: 35px;
+            top: -2px; left: -2px; right: -2px; height: 35px;
             background: #ffffff;
             border-radius: 14px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             clip-path: path('M 0 0 L 160 0 L 160 16 Q 148 34 135 22 Q 120 10 105 26 Q 90 35 75 20 Q 60 8 45 24 Q 30 32 15 18 Q 8 26 0 18 Z');
         }
         .sprinkle {
-            position: absolute;
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
+            position: absolute; width: 6px; height: 6px; border-radius: 50%;
         }
         .candles-container {
             position: absolute;
-            bottom: 175px;
-            left: 75px;
-            width: 130px;
-            display: flex;
-            justify-content: space-around;
+            bottom: 175px; left: 75px; width: 130px;
+            display: flex; justify-content: space-around;
         }
         .candle {
-            position: relative;
-            width: 7px;
-            height: 36px;
+            position: relative; width: 7px; height: 36px;
             background: linear-gradient(to bottom, #ffffff, #d8b4fe);
             border-radius: 3px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         .flame {
-            position: absolute;
-            top: -15px;
-            left: -3px;
-            width: 13px;
-            height: 18px;
-            background: #fde047;
-            border-radius: 50% 50% 20% 20%;
+            position: absolute; top: -15px; left: -3px; width: 13px; height: 18px;
+            background: #fde047; border-radius: 50% 50% 20% 20%;
             box-shadow: 0 0 12px #facc15;
             animation: flicker 0.6s infinite alternate;
             cursor: pointer;
-            transition: opacity 0.3s ease, transform 0.3s ease;
         }
         .flame.extinguished {
-            opacity: 0 !important;
-            transform: scale(0) !important;
-            pointer-events: none !important;
-            display: none !important;
+            opacity: 0 !important; transform: scale(0) !important; pointer-events: none !important; display: none !important;
         }
         @keyframes flicker {
             0% { transform: scale(1) rotate(-2deg); opacity: 0.9; }
             100% { transform: scale(1.1) rotate(2deg); opacity: 1; }
         }
-        .controls {
-            margin-top: 25px;
+        .controls { margin-top: 25px; }
+        button, .arcade-link-btn {
+            background: #ffffff; color: #581c87; border: none;
+            padding: 14px 32px; font-family: 'Fredoka', sans-serif;
+            font-size: 1rem; border-radius: 30px; cursor: pointer;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2); font-weight: 600;
+            transition: transform 0.1s; width: 100%; max-width: 280px;
+            text-decoration: none; display: inline-block;
         }
-        button {
-            background: #ffffff;
-            color: #581c87;
-            border: none;
-            padding: 14px 32px;
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 1rem;
-            border-radius: 30px;
-            cursor: pointer;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            transition: transform 0.1s, box-shadow 0.2s;
-        }
-        button:active {
-            transform: scale(0.96);
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
-        }
-        #mic-status {
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 0.9rem;
-            color: #ffffff;
-            margin-top: 12px;
-            min-height: 20px;
-            font-weight: 500;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-        }
+        button:active, .arcade-link-btn:active { transform: scale(0.96); }
+        #mic-status { font-size: 0.9rem; margin-top: 12px; font-weight: 400; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); }
         #wish-card {
+            display: none; background: #ffffff; padding: 25px;
+            border-radius: 24px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            margin-top: 20px; border: 2px solid #f3e8ff; color: #374151;
+        }
+        #wish-card h2 { color: #6b21a8; margin-top: 0; font-size: 1.6rem; }
+        #wish-card p { font-size: 1rem; line-height: 1.6; }
+        
+        #arcade-section {
             display: none;
-            background: #ffffff;
-            padding: 25px;
-            border-radius: 24px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
             margin-top: 20px;
-            border: 2px solid #f3e8ff;
-            animation: popUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        @keyframes popUp {
-            0% { transform: scale(0.9); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        #wish-card h2 {
-            color: #6b21a8;
-            font-family: 'Playfair Display', serif;
-            margin-top: 0;
-            font-size: 1.6rem;
-            margin-bottom: 12px;
-        }
-        #wish-card p {
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 1rem;
-            line-height: 1.6;
-            color: #374151;
-            font-weight: 500;
-        }
-        .footer {
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 0.8rem;
-            color: #f3e8ff;
-            margin-top: 30px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            font-weight: 600;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-        }
+        .footer { font-size: 0.8rem; color: #f3e8ff; margin-top: 30px; letter-spacing: 1px; text-transform: uppercase; font-weight: 600; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>Double Digits</h1>
-        <div class="subtitle">Official 10th Birthday Countdown</div>
+        <h1>Double Digits Club</h1>
+        <div class="subtitle">Derrin's 10th Birthday Countdown</div>
 
         <div class="countdown-box" id="countdown-box">
-            <div style="font-family: 'Segoe UI', sans-serif; font-size: 0.8rem; color: #7e22ce; text-transform: uppercase; letter-spacing: 1px; font-weight: 700;">Time until Sept 3 Midnight:</div>
+            <div style="font-size: 0.8rem; color: #7e22ce; text-transform: uppercase; font-weight: 600;">Time until September 3:</div>
             <div class="timer-display" id="timer">Loading...</div>
         </div>
 
         <div class="cake-wrapper">
             <div class="plate"></div>
-            
             <div class="cake-layer-bottom">
                 <div class="drippy-icing"></div>
                 <div class="sprinkle" style="top: 42px; left: 40px; background: #db2777;"></div>
                 <div class="sprinkle" style="top: 48px; left: 110px; background: #9333ea;"></div>
                 <div class="sprinkle" style="top: 45px; left: 185px; background: #2563eb;"></div>
-                <div class="sprinkle" style="top: 65px; left: 75px; background: #059669;"></div>
-                <div class="sprinkle" style="top: 60px; left: 145px; background: #db2777;"></div>
-                <div class="sprinkle" style="top: 68px; left: 215px; background: #9333ea;"></div>
             </div>
-            
             <div class="cake-layer-top">
                 <div class="drippy-icing-top"></div>
                 <div class="sprinkle" style="top: 38px; left: 35px; background: #2563eb;"></div>
                 <div class="sprinkle" style="top: 42px; left: 85px; background: #059669;"></div>
-                <div class="sprinkle" style="top: 40px; left: 125px; background: #db2777;"></div>
             </div>
-            
             <div class="candles-container" id="candles-box">
                 <div class="candle"><div class="flame" onclick="triggerRightToLeftSequence()"></div></div>
                 <div class="candle"><div class="flame" onclick="triggerRightToLeftSequence()"></div></div>
@@ -289,15 +208,17 @@
             <div id="mic-status">Tap the button, then blow into your mic or tap any flame</div>
         </div>
 
+        <div id="arcade-section">
+            <a href="arcade.html" class="arcade-link-btn" style="background: #fde047; color: #581c87;">🎮 Open Birthday Arcade!</a>
+        </div>
+
         <div id="wish-card">
             <h2>Happy 10th Birthday Derrin!</h2>
             <p>Welcome to the double digits club! May your year ahead be bright, filled with cozy crochet projects, unicorns, puppies and endless happiness. You are the cutest cousin ever!</p>
         </div>
     </div>
 
-    <div class="footer">
-        Made with love just for you 🤍
-    </div>
+    <div class="footer">Made with love just for you 🤍</div>
 
     <script>
         const targetDate = new Date('September 3, 2026 00:00:00').getTime();
@@ -307,7 +228,8 @@
             const distance = targetDate - now;
 
             if (distance < 0) {
-                document.getElementById("countdown-box").innerHTML = "<span style='color: #6b21a8; font-weight: 700;'>✨ IT'S SEPTEMBER 3! HAPPY BIRTHDAY! ✨</span>";
+                document.getElementById("countdown-box").innerHTML = "<span style='color: #6b21a8; font-weight: 600;'>IT'S SEPTEMBER 3! HAPPY BIRTHDAY!!! ✨</span>";
+                document.getElementById("arcade-section").style.display = "block";
                 return;
             }
 
@@ -328,16 +250,13 @@
 
         function triggerRightToLeftSequence() {
             if (isAnimating) return;
-            
             const flames = Array.from(document.querySelectorAll('#candles-box .flame:not(.extinguished)'));
             if (flames.length === 0) return;
-            
             isAnimating = true;
 
             flames.forEach((flame, index) => {
                 setTimeout(() => {
                     flame.classList.add('extinguished');
-                    
                     if (index === flames.length - 1) {
                         setTimeout(() => {
                             document.getElementById('controls-section').style.display = 'none';
@@ -348,14 +267,12 @@
             });
         }
 
-        let isBlowLocked = false;
-
         function initMic() {
             const status = document.getElementById('mic-status');
             const btn = document.getElementById('mic-btn');
 
             if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                status.innerText = "Mic blowing not supported. Just tap the flames!";
+                status.innerText = "Mic not supported. Just tap the flames!";
                 return;
             }
 
@@ -363,25 +280,18 @@
                 .then(stream => {
                     btn.style.display = 'none';
                     status.innerText = "Mic active! Blow gently into your phone mic ✨";
-
                     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
                     const microphone = audioContext.createMediaStreamSource(stream);
                     const analyser = audioContext.createAnalyser();
                     analyser.fftSize = 512;
                     microphone.connect(analyser);
-
                     const dataArray = new Uint8Array(analyser.frequencyBinCount);
 
                     function detectBlow() {
                         analyser.getByteFrequencyData(dataArray);
-                        let sum = 0;
-                        for (let i = 0; i < dataArray.length; i++) {
-                            sum += dataArray[i];
-                        }
+                        let sum = dataArray.reduce((a, b) => a + b, 0);
                         let average = sum / dataArray.length;
-
-                        if (average > 100 && !isBlowLocked && !isAnimating) {
-                            isBlowLocked = true;
+                        if (average > 100 && !isAnimating) {
                             triggerRightToLeftSequence();
                         }
                         requestAnimationFrame(detectBlow);
